@@ -1,10 +1,10 @@
 import React from 'react';
-import { Row, Col, Card, Statistic } from 'antd';
+import { Row, Col, Card, Statistic, Table, Tag } from 'antd';
 import {
   UserOutlined,
   CalendarOutlined,
   MedicineBoxOutlined,
-  FileTextOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import MainLayout from '../layouts/MainLayout';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,30 +12,79 @@ import { useAuth } from '../contexts/AuthContext';
 const Dashboard = () => {
   const { user, isDoctor } = useAuth();
 
-  const stats = [
+  // Mock data - replace with real data from your backend
+  const statistics = [
     {
-      title: 'Tổng số bệnh nhân',
-      value: 150,
-      icon: <UserOutlined />,
-      color: '#1890ff',
+      title: 'Total Patients',
+      value: 156,
+      icon: <TeamOutlined style={{ fontSize: '24px', color: '#1890ff' }} />,
     },
     {
-      title: 'Lịch hẹn hôm nay',
+      title: 'Today\'s Appointments',
       value: 8,
-      icon: <CalendarOutlined />,
-      color: '#52c41a',
+      icon: <CalendarOutlined style={{ fontSize: '24px', color: '#52c41a' }} />,
     },
     {
-      title: 'Đơn thuốc đang xử lý',
+      title: 'Active Medications',
+      value: 45,
+      icon: <MedicineBoxOutlined style={{ fontSize: '24px', color: '#faad14' }} />,
+    },
+    {
+      title: 'Staff Members',
       value: 12,
-      icon: <MedicineBoxOutlined />,
-      color: '#faad14',
+      icon: <UserOutlined style={{ fontSize: '24px', color: '#eb2f96' }} />,
+    },
+  ];
+
+  const recentAppointments = [
+    {
+      key: '1',
+      patient: 'John Doe',
+      doctor: 'Dr. Smith',
+      date: '2024-03-20 09:00',
+      status: 'Scheduled',
     },
     {
-      title: 'Báo cáo mới',
-      value: 5,
-      icon: <FileTextOutlined />,
-      color: '#f5222d',
+      key: '2',
+      patient: 'Jane Smith',
+      doctor: 'Dr. Johnson',
+      date: '2024-03-20 10:30',
+      status: 'Completed',
+    },
+    {
+      key: '3',
+      patient: 'Mike Johnson',
+      doctor: 'Dr. Williams',
+      date: '2024-03-20 14:00',
+      status: 'Scheduled',
+    },
+  ];
+
+  const columns = [
+    {
+      title: 'Patient',
+      dataIndex: 'patient',
+      key: 'patient',
+    },
+    {
+      title: 'Doctor',
+      dataIndex: 'doctor',
+      key: 'doctor',
+    },
+    {
+      title: 'Date & Time',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <Tag color={status === 'Completed' ? 'green' : 'blue'}>
+          {status}
+        </Tag>
+      ),
     },
   ];
 
@@ -46,19 +95,29 @@ const Dashboard = () => {
         <p>Đây là tổng quan về hệ thống của bạn</p>
 
         <Row gutter={[16, 16]} className="stats-row">
-          {stats.map((stat, index) => (
+          {statistics.map((stat, index) => (
             <Col xs={24} sm={12} md={6} key={index}>
               <Card>
                 <Statistic
                   title={stat.title}
                   value={stat.value}
                   prefix={stat.icon}
-                  valueStyle={{ color: stat.color }}
                 />
               </Card>
             </Col>
           ))}
         </Row>
+
+        <Card
+          title="Recent Appointments"
+          style={{ marginTop: 16 }}
+        >
+          <Table
+            columns={columns}
+            dataSource={recentAppointments}
+            pagination={false}
+          />
+        </Card>
 
         <Row gutter={[16, 16]} className="dashboard-content">
           <Col xs={24} lg={16}>

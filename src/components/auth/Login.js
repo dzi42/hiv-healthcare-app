@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, message } from 'antd';
+import { Form, Input, Button, Card, message, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -7,20 +7,22 @@ import './Auth.css';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
     setLoading(true);
+    setError('');
     try {
       console.log('Attempting login with:', values);
       const user = await login(values.email, values.password);
       console.log('Login successful, user:', user);
       message.success('Đăng nhập thành công!');
-      navigate('/dashboard', { replace: true });
+      navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      message.error(error.message);
+      setError(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }
@@ -29,6 +31,15 @@ const Login = () => {
   return (
     <div className="auth-container">
       <Card title="Đăng nhập" className="auth-card">
+        {error && (
+          <Alert
+            message="Lỗi đăng nhập"
+            description={error}
+            type="error"
+            showIcon
+            style={{ marginBottom: 24 }}
+          />
+        )}
         <Form
           name="login"
           onFinish={onFinish}
@@ -78,6 +89,14 @@ const Login = () => {
           <div className="auth-links">
             <p>
               Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+            </p>
+          </div>
+
+          <div className="auth-info">
+            <p style={{ color: '#666', fontSize: '14px' }}>
+              Tài khoản mẫu:<br />
+              Email: doctor@example.com<br />
+              Mật khẩu: 123456
             </p>
           </div>
         </Form>
